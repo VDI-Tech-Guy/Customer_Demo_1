@@ -3,7 +3,7 @@
 	"{{ F5_VIP_Name }}": {
 		"class": "Service_HTTPS",
 		"virtualAddresses": [
-			"{{ F5_VIP_IP_2 }}"
+			"{{ F5_VIP_IP }}"
 		],
 		"pool": "{{ F5_VIP_Name }}_pool",
 		"redirect80": false,
@@ -33,7 +33,7 @@
 	"{{ F5_VIP_Name }}_cert": {
 		"class": "TLS_Server",
 		"certificates": [{
-		"certificate": "{{ F5_VIP_Name_2 }}_crt"
+		"certificate": "{{ F5_VIP_Name }}_crt"
 		}]
 	},
 	"{{ F5_VIP_Name }}_crt": {
