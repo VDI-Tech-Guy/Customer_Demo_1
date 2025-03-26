@@ -84,7 +84,7 @@
 	"{{ F5_VIP_Name_2 }}_crt": {
 		"class": "Certificate",
 		"remark": "in practice we recommend using a passphrase",
-		"certificate": "{{ lookup('file', '{{playbook_dir}}/app-demo.crt') | replace('\n', '\\n') }}",
-		"privateKey": "{{ lookup('file', '{{playbook_dir}}/app-demo.key') | replace('\n', '\\n') }}"
+		"certificate": "{{ lookup('file', '{{playbook_dir}}/new-app-demo.crt') | replace('\n', '\\n') }}",
+		"privateKey": "{{ lookup('file', '{{playbook_dir}}/new-app-demo.key') | replace('\n', '\\n') }}"
 	}
 }
