@@ -1,0 +1,8 @@
+---
+
+- name: Provision VM from Template 
+  ansible.builtin.include_tasks: 
+    file: deploy_f5_ova.yml
+  with_items: "{{f5_ova_builds}}"
+  loop_control:
+    loop_var: ova_builds_var
