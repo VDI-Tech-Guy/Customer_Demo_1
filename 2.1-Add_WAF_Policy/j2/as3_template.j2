@@ -47,7 +47,7 @@
 	},
 	"{{ F5_VIP_Name }}-Policy": {
       "class": "WAF_Policy",
-      "url": "{{ ASM_Policy_Website }}{{ file_name.stdout }}",
+      "url": "{{ ASM_Policy_Website }}",
       "ignoreChanges": false
 	}
 },
@@ -100,7 +100,7 @@
 	},
 	"{{ F5_VIP_Name_2 }}-Policy": {
       "class": "WAF_Policy",
-      "url": "{{ ASM_Policy_Website }}{{ file_name.stdout }}",
+      "url": "{{ ASM_Policy_Website }}",
       "ignoreChanges": false
 	}
 }
