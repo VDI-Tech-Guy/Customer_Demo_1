@@ -22,7 +22,7 @@
 
     - name: Wait for Declarative Onboarding Provision to Complete
       ansible.builtin.uri:
-        url: "https://{{ ansible_host }}:{{ server_port }}/mgmt/shared/declarative-onboarding/task/{{ task.task_id }}"
+        url: "https://{{ ansible_host }}/mgmt/shared/declarative-onboarding/task/{{ task.task_id }}"
         method: GET
         return_content: true
         status_code: 200
