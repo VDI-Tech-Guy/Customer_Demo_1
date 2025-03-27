@@ -1,0 +1,9 @@
+---
+
+  - name: Disable DHCP
+    ansible.builtin.include_tasks:
+      file: disable_dhcp.yml
+
+  - name: Configure DO on Primary Server
+    ansible.builtin.include_tasks:
+      file: do_configure.yml

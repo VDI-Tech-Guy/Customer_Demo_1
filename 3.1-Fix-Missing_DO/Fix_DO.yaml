@@ -1,43 +1,23 @@
 ---
-- name: AS3 FIX DO
-  hosts: f5s
-  connection: httpapi
-  gather_facts: false
+#This Code is for 16.1 and above as the build contains a fix for guest customization to work correctly.
 
-  vars:
-    ansible_network_os: f5networks.f5_bigip.bigip
-    ansible_httpapi_use_ssl: yes
-    ansible_httpapi_validate_certs: no
-    ansible_httpapi_port: "443"
-    ansible_httpapi_password: "{{ ansible_password }}"
-    ansible_httpapi_use_proxy: false
+#Deploy OVA
+- hosts: vCenter
+  connection: local
+  gather_facts: true
+  roles:
+    - roles/General-Roles/date_time
+    - roles/vSphere-Roles/BIG_IP/create_dyn_group_f5_vms
 
+- hosts: dynamic_f5_vms
+  connection: local
+  gather_facts: true
+  roles:
+    - roles/F5-Roles/BIG_IP/do_configure
 
-  tasks:
-
-    - name: debug
-      ansible.builtin.debug: 
-        msg: "{{ lookup('template','j2/do_configure_deviceCert.j2', split_lines=False) }}"
-
- 
-    - name: Provision ASM/WAF via Declarative Onboarding
-      f5networks.f5_bigip.bigip_do_deploy:
-        content: "{{ lookup('template','j2/do_configure_deviceCert.j2', split_lines=False) }}"
-      register: task
-
-    - name: Wait for Declarative Onboarding Provision to Complete
-      ansible.builtin.uri:
-        url: "https://{{ ansible_host }}/mgmt/shared/declarative-onboarding/task/{{ task.task_id }}"
-        method: GET
-        return_content: true
-        status_code: 200
-        force_basic_auth: true
-        user: "{{ ansible_user }}"
-        password: "{{ ansible_password }}"
-        validate_certs: false
-      register: atc_DO_status
-      until: atc_DO_status is success
-      retries: 30
-      delay: 15
-      delegate_to: localhost
-      when: task.changed
+# End-Time
+- hosts: localhost
+  connection: local
+  gather_facts: true
+  roles:
+    - roles/General-Roles/date_time

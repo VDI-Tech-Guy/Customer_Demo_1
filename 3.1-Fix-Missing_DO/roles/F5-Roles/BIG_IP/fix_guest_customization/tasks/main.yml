@@ -1,0 +1,6 @@
+---
+# tasks file for Role
+
+ - name: Fix-Guest-Customization
+   ansible.builtin.include_tasks:
+     file: fix_guest_customization.yml

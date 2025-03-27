@@ -1,0 +1,14 @@
+---
+# tasks file for ASM-Role
+
+ - name: Backup F5 Configuration
+   ansible.builtin.include_tasks:
+     file: f5_backup_config.yaml
+   tags: 
+     - backup
+
+ - name: Clone Backup F5 Configuration to NAS
+   ansible.builtin.include_tasks:
+     file: clone_ucs_to_nas.yaml
+   tags: 
+     - backup
