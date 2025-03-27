@@ -1,0 +1,90 @@
+"{{ F5_VIP_Name }}": {
+	"class": "Application",
+	"{{ F5_VIP_Name }}": {
+		"class": "Service_HTTPS",
+		"virtualAddresses": [
+			"{{ F5_VIP_IP }}"
+		],
+		"pool": "{{ F5_VIP_Name }}_pool",
+		"redirect80": false,
+		"profileMultiplex": {
+			"bigip": "/Common/oneconnect"
+		},
+		"serverTLS": "{{ F5_VIP_Name }}_cert",
+		"persistenceMethods": []
+	},
+	"{{ F5_VIP_Name }}_pool": {
+		"class": "Pool",
+		"minimumMembersActive": 0,
+		"minimumMonitors": "all",
+		"monitors": [
+			"http"
+		],
+		"members": [{
+		"servicePort": 80,
+		"serverAddresses": [
+			{% set comma = joiner(",") %}
+			{% for mem in pool_members %}
+			{{comma()}} "{{  hostvars[mem]['ansible_host']  }}"
+			{% endfor %}
+		]
+		}]
+	},
+	"{{ F5_VIP_Name }}_cert": {
+		"class": "TLS_Server",
+		"certificates": [{
+		"certificate": "{{ F5_VIP_Name }}_crt"
+		}]
+	},
+	"{{ F5_VIP_Name }}_crt": {
+		"class": "Certificate",
+		"remark": "in practice we recommend using a passphrase",
+		"certificate": "{{ lookup('file', '{{playbook_dir}}/new-app-demo.crt') | replace('\n', '\\n') }}",
+		"privateKey": "{{ lookup('file', '{{playbook_dir}}/new-app-demo.key') | replace('\n', '\\n') }}"
+	}
+},
+"{{ F5_VIP_Name_2 }}": {
+	"class": "Application",
+	"{{ F5_VIP_Name_2 }}": {
+		"class": "Service_HTTPS",
+		"virtualAddresses": [
+			"{{ F5_VIP_IP_2 }}"
+		],
+		"pool": "{{ F5_VIP_Name_2 }}_pool",
+		"redirect80": false,
+		"profileMultiplex": {
+			"bigip": "/Common/oneconnect"
+		},
+		"serverTLS": "{{ F5_VIP_Name_2 }}_cert",
+		"persistenceMethods": []
+	},
+	"{{ F5_VIP_Name_2 }}_pool": {
+		"class": "Pool",
+		"minimumMembersActive": 0,
+		"minimumMonitors": "all",
+		"monitors": [
+			"http"
+		],
+		"members": [{
+			"servicePort": 80,
+			"serverAddresses": [
+				{% set comma = joiner(",") %}
+				{% for mem in pool_members %}
+				{{comma()}} "{{  hostvars[mem]['ansible_host']  }}"
+				{% endfor %}
+			]
+		}]
+	},
+	"{{ F5_VIP_Name_2 }}_cert": {
+		"class": "TLS_Server",
+		"certificates": [{
+			"certificate": "{{ F5_VIP_Name_2 }}_crt"
+		}]
+	},
+	"{{ F5_VIP_Name_2 }}_crt": {
+		"class": "Certificate",
+		"remark": "in practice we recommend using a passphrase",
+		"certificate": "{{ lookup('file', '{{playbook_dir}}/new-app-demo.crt') | replace('\n', '\\n') }}",
+		"privateKey": "{{ lookup('file', '{{playbook_dir}}/new-app-demo.key') | replace('\n', '\\n') }}"
+	}
+}
