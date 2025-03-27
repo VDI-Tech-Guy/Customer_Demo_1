@@ -15,6 +15,11 @@
 
   tasks:
 
+    - name: debug
+      ansible.builtin.debug: 
+        msg: "{{ lookup('template','j2/do_configure_deviceCert.j2', split_lines=False) }}"
+
+ 
     - name: Provision ASM/WAF via Declarative Onboarding
       f5networks.f5_bigip.bigip_do_deploy:
         content: "{{ lookup('template','j2/do_configure_deviceCert.j2', split_lines=False) }}"
