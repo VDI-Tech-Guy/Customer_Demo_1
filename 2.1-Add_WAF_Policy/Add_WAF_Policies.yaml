@@ -17,7 +17,7 @@
 
     - name: Provision ASM/WAF via Declarative Onboarding
       f5networks.f5_bigip.bigip_do_deploy:
-        content: "{{ lookup('template','j2/provision.j2', split_lines=False) }}"
+        content: "{{ lookup('template','j2/do_configure_deviceCert.j2', split_lines=False) }}"
       register: task
 
     - name: Wait for Declarative Onboarding Provision to Complete
