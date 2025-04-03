@@ -1,0 +1,114 @@
+"{{ F5_VIP_Name }}": {
+	"class": "Application",
+	"{{ F5_VIP_Name }}": {
+		"class": "Service_HTTPS",
+		"virtualAddresses": [
+			"{{ F5_VIP_IP }}"
+		],
+		"pool": "{{ F5_VIP_Name }}_pool",
+		"redirect80": false,
+		"profileMultiplex": {
+			"bigip": "/Common/oneconnect"
+		},
+		"serverTLS": "{{ F5_VIP_Name }}_cert",		
+		"policyWAF": {
+           "use": "{{ F5_VIP_Name }}-Policy"
+		},
+		"persistenceMethods": []
+	},
+	"{{ F5_VIP_Name }}_pool": {
+		"class": "Pool",
+		"minimumMembersActive": 0,
+		"minimumMonitors": "all",
+		"monitors": [
+			"http"
+		],
+		"members": [{
+		"servicePort": 80,
+		"serverAddresses": [
+			{% set comma = joiner(",") %}
+			{% for mem in pool_members %}
+			{{comma()}} "{{  hostvars[mem]['ansible_host']  }}"
+			{% endfor %}
+		]
+		}]
+	},
+	"{{ F5_VIP_Name }}_cert": {
+		"class": "TLS_Server",
+		"certificates": [{
+		"certificate": "{{ F5_VIP_Name }}_crt"
+		}]
+	},
+	"{{ F5_VIP_Name }}_crt": {
+		"class": "Certificate",
+		"remark": "in practice we recommend using a passphrase",
+		"certificate": "{{ lookup('file', '{{playbook_dir}}/new-app-demo.crt') | replace('\n', '\\n') }}",
+		"privateKey": "{{ lookup('file', '{{playbook_dir}}/new-app-demo.key') | replace('\n', '\\n') }}"
+	},
+	"{{ F5_VIP_Name }}-Policy": {
+      "class": "WAF_Policy",
+      "url": "{{ ASM_Policy_Website }}",
+      "ignoreChanges": false
+	}
+},
+"{{ F5_VIP_Name_2 }}": {
+	"class": "Application",
+	"{{ F5_VIP_Name_2 }}": {
+		"class": "Service_HTTPS",
+		"virtualAddresses": [
+			"{{ F5_VIP_IP_2 }}"
+		],
+		"pool": "{{ F5_VIP_Name_2 }}_pool",
+		"redirect80": false,
+		"profileMultiplex": {
+			"bigip": "/Common/oneconnect"
+		},
+		"policyWAF": {
+           "use": "{{ F5_VIP_Name_2 }}-Policy"
+		},
+		"serverTLS": "{{ F5_VIP_Name_2 }}_cert",
+		"persistenceMethods": []
+	},
+	"{{ F5_VIP_Name_2 }}_pool": {
+		"class": "Pool",
+		"minimumMembersActive": 0,
+		"minimumMonitors": "all",
+		"monitors": [
+			"http"
+		],
+		"members": [
+        	{%  for item in pool_members %}
+        	{
+        		"servicePort": 80,
+          		"serverAddresses": [
+          			"{{hostvars[item]['ansible_host'] }}"
+          		],
+          		{%  if hostvars[item]['ansible_host'] in F5_Pool_Members %}
+          		"adminState": "{{F5_Pool_Node_State|lower}}"
+          		{%  elif "all" in F5_Pool_Members|lower %}
+          		"adminState": "{{F5_Pool_Node_State|lower}}"
+		  		{%  else  %}
+		  		"adminState": "enable"
+          		{% endif %}
+        	}{{ ", " if not loop.last else ""}}
+        	{% endfor %}
+        ]
+	},
+	"{{ F5_VIP_Name_2 }}_cert": {
+		"class": "TLS_Server",
+		"certificates": [{
+			"certificate": "{{ F5_VIP_Name_2 }}_crt"
+		}]
+	},
+	"{{ F5_VIP_Name_2 }}_crt": {
+		"class": "Certificate",
+		"remark": "in practice we recommend using a passphrase",
+		"certificate": "{{ lookup('file', '{{playbook_dir}}/new-app-demo.crt') | replace('\n', '\\n') }}",
+		"privateKey": "{{ lookup('file', '{{playbook_dir}}/new-app-demo.key') | replace('\n', '\\n') }}"
+	},
+	"{{ F5_VIP_Name_2 }}-Policy": {
+      "class": "WAF_Policy",
+      "url": "{{ ASM_Policy_Website_2 }}",
+      "ignoreChanges": false
+	}
+}
